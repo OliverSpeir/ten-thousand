@@ -60,3 +60,5 @@ class GameLogic:
                     score += x[1] * 100
         print("Total Score", score)
         return score
+
+
