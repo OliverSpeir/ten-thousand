@@ -58,7 +58,6 @@ class GameLogic:
             for x in dice:
                 if x[0] == 1:
                     score += x[1] * 100
-        print("Total Score", score)
         return score
 
 
