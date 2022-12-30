@@ -26,9 +26,9 @@ def start():
             break
 
         total_points += round_score
-        round_number += 1
         print(f"You banked {round_score} points in round {round_number}")
         print(f"Total score is {total_points} points")
+        round_number += 1
 
     print(f"Thanks for playing. You earned {total_points} points")
 
@@ -42,7 +42,6 @@ def play_round(round_number, roller=GameLogic.roll_dice):
     while True:
         roll_string = ""
         roll = roller(dice_not_kept)
-        #
         #roll = (1, 1, 1, 1, 1, 1)
         for x in roll:
             roll_string += str(x) + " "
