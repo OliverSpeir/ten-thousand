@@ -5,59 +5,53 @@ from collections import Counter
 class GameLogic:
 
     @staticmethod
+    def validate_keepers(dice_roll, dice_kept):
+        dice_roll_validation = Counter(dice_roll)
+        dice_kept_validation = Counter(dice_kept)
+
+        if len(dice_kept_validation) <= len(dice_roll_validation):
+            if all(dice_kept_validation[key] <= dice_roll_validation[key] for key in dice_kept_validation.keys()):
+                return True
+            return False
+        else:
+            return False
+
+    @staticmethod
     def roll_dice(number):
         return tuple(randint(1, 6) for x in range(0, number))
 
     @staticmethod
-    def calculate_score(roll):
-        dice = Counter(roll).most_common()
+    # Calculates Scores and references them to test value to determine output
+    def calculate_score(dice_roll):
+        dice_count = Counter(dice_roll)
+
+        score_dict = {1: 1000, 2: 200, 3: 300, 4: 400, 5: 500, 6: 600}
+
         score = 0
 
-        if not dice:
-            return score
+        # calculate straight
+        if len(dice_count) == 6:
+            return 1500
 
-        # 3,4,5,and 6 of a kind
-        if (dice[0][1]) >= 3:
-            if dice[0][0] != 1:
-                score += dice[0][0] * 100 * (dice[0][1] - 2)
-                if dice[0][1] == 6:
-                    return score
-                dice = dice[1:]
-            else:
-                score += 1000 * (dice[0][1] - 2)
-                if dice[0][1] == 6:
-                    return score
-                dice = dice[1:]
+        # calculate triple doubles
+        if len(dice_count) == 3 and all(value == 2 for value in dice_count.values()):
+            return 1500
 
-        # 2 3 of a kinds
-        if len(dice) == 1:
-            if dice[0][1] == 3:
-                if dice[0][0] != 1:
-                    score += dice[0][0] * 100
-                    return score
-                else:
-                    score += 1000
-                    return score
+        # score based on face value
+        for face_value, count in dice_count.items():
+            if face_value == 5 and count <= 2:
+                score += 50 * count
+            elif face_value == 1 and count <= 2:
+                score += 100 * count
+            elif face_value == 1 and count == 3:
+                score += 1000
+            elif count == 3:
+                score += score_dict[face_value]
+            elif count == 4:
+                score += score_dict[face_value] * 2
+            elif count == 5:
+                score += score_dict[face_value] * 3
+            elif count == 6:
+                score += score_dict[face_value] * 4
 
-        # straight
-        if len(dice) == 6:
-            score += 1500
-            return score
-
-        # three pair
-        if len(dice) == 3:
-            if dice[2][1] == 2:
-                score += 1500
-                return score
-
-        # single 5 or single 1
-        else:
-            for x in dice:
-                if x[0] == 5:
-                    score += x[1] * 50
-            for x in dice:
-                if x[0] == 1:
-                    score += x[1] * 100
         return score
-
-
